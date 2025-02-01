@@ -1,31 +1,33 @@
-import java.util.Objects;
-import java.util.Scanner;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.util.Stack;
 
 public class Main {
-    public static void main(String[] args) {
-        Stack<String> st = new Stack<>();
-        Scanner sc = new Scanner(System.in);
-        int numOfThings = Integer.parseInt(sc.nextLine());
-        for(int i = 0 ; i < numOfThings ; i++){
-            String[] array = sc.nextLine().split("");
-            st.clear();
-            for (String s : array) {
-                if(st.isEmpty()){st.push(s);}
+    public static void main(String[] args) throws Exception {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+
+        int N = Integer.parseInt(br.readLine());
+        StringBuilder sb = new StringBuilder();
+
+        for(int i = 0 ; i < N ; i++){
+            String input = br.readLine();
+            Stack<Character> stack = new Stack<>();
+            boolean No = false;
+            for(int j = 0 ; j < input.length() ; j++){
+                if(No) break;
+                char tmp = input.charAt(j);
+                if(tmp == '(') stack.push(tmp);
                 else{
-                    if(Objects.equals(st.peek(), "(") && Objects.equals(s, ")")){
-                        st.pop();
-                    }else {
-                        st.push(s);
-                    }
+                    if(stack.isEmpty()) No = true;
+                    else stack.pop();
                 }
-                //System.out.println(st);
             }
-            if(st.isEmpty())
-                System.out.println("YES");
-            else
-                System.out.println("NO");
+            if(No || !stack.isEmpty()) sb.append("NO");
+            else sb.append("YES");
+
+            sb.append("\n");
         }
 
+        System.out.println(sb);
     }
 }
