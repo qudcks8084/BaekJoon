@@ -10,7 +10,7 @@ public class Main {
         while(true){
             String input = br.readLine();
             if(input.equals(".")) break;
-            String trimmed = input.replaceAll("[^(){}\\[\\]]", "");
+            String trimmed = input.replaceAll("[^()\\[\\]]", "");
             Stack<Character> stack = new Stack<>();
             boolean no = false;
             for(int i = 0 ; i < trimmed.length() ; i++){
@@ -18,8 +18,6 @@ public class Main {
                 if(no) break;
                 if(tmp == ')'){
                     if(stack.isEmpty() || stack.pop() != '(') no = true;
-                } else if(tmp == '}'){
-                    if(stack.isEmpty() || stack.pop() != '{') no = true;
                 } else if(tmp == ']'){
                     if(stack.isEmpty() || stack.pop() != '[') no = true;
                 } else{
