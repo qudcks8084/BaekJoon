@@ -44,7 +44,7 @@ public class Main {
     }
 
     public static int child_bfs(int start) {
-        Queue<Integer> queue = new LinkedList<>();
+        Queue<Integer> queue = new ArrayDeque<>();
         visited[start] = true;
         queue.offer(start);
         int count = 1;
