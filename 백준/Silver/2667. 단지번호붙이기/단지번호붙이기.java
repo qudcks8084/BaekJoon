@@ -2,7 +2,6 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 
 public class Main {
 	static int N, house;
@@ -14,7 +13,6 @@ public class Main {
 		
 		N = Integer.parseInt(br.readLine());
 		map = new boolean[N][N];
-		HashMap<Integer, Integer> villages = new HashMap<>(); 
 		
 		for(int i = 0 ; i < N ; i++) {
 			char[] input = br.readLine().toCharArray();
@@ -23,12 +21,10 @@ public class Main {
 			}
 		}
 		
-		int max = 0;
 		ArrayList<Integer> answer = new ArrayList<>();
 		for(int i = 0 ; i < N ; i++) {
 			for(int j = 0 ; j < N ; j++) {
 				if(map[i][j]) {
-					max++;
 					house = 1;
 					map[i][j] = false;
 					village(i, j);
@@ -39,7 +35,7 @@ public class Main {
 		Collections.sort(answer);
 		StringBuilder sb = new StringBuilder();
 		
-		sb.append(max).append("\n");
+		sb.append(answer.size()).append("\n");
 		for(int num : answer) {
 			sb.append(num).append("\n");
 		}
