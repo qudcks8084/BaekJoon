@@ -5,7 +5,7 @@ import java.util.Collections;
 import java.util.HashMap;
 
 public class Main {
-	static int N, numOfVillage, house;
+	static int N, house;
 	static boolean[][] map;
 	static int[] nx = {0,1,0,-1};
 	static int[] ny = {-1,0,1,0};
@@ -23,10 +23,12 @@ public class Main {
 			}
 		}
 		
+		int max = 0;
 		ArrayList<Integer> answer = new ArrayList<>();
 		for(int i = 0 ; i < N ; i++) {
 			for(int j = 0 ; j < N ; j++) {
 				if(map[i][j]) {
+					max++;
 					house = 1;
 					map[i][j] = false;
 					village(i, j);
@@ -37,7 +39,7 @@ public class Main {
 		Collections.sort(answer);
 		StringBuilder sb = new StringBuilder();
 		
-		sb.append(answer.size()).append("\n");
+		sb.append(max).append("\n");
 		for(int num : answer) {
 			sb.append(num).append("\n");
 		}
