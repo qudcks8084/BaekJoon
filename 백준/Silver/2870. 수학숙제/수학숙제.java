@@ -38,11 +38,7 @@ public class Main {
         }
         arr.sort((str1, str2) -> {
             if(str1.length() == str2.length()){
-                for(int i = 0 ; i < str1.length() ; i++){
-                    if(str1.charAt(i) != str2.charAt(i))
-                        return Character.compare(str1.charAt(i), str2.charAt(i));
-                }
-                return 0;
+                return str1.compareTo(str2);
             }
             else return Integer.compare(str1.length(), str2.length());
         });
