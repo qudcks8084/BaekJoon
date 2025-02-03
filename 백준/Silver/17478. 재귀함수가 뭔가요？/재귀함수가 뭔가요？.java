@@ -14,7 +14,10 @@ public class Main {
     }
 
     public static void recursion(int depth){
-        String blank = "____".repeat(depth);
+        StringBuilder blank = new StringBuilder();
+        for(int i = 0 ; i < depth ; i++){
+            blank.append("____");
+        }
         if(depth == N){
             sb.append(blank).append("\"재귀함수가 뭔가요?\"\n");
             sb.append(blank).append("\"재귀함수는 자기 자신을 호출하는 함수라네\"\n");
