@@ -8,19 +8,27 @@ public class Main {
     public static void main(String[] args) throws Exception {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
-        ArrayList<Integer> arr = new ArrayList<>();
+        int[] arr = new int[2000001];
 
         int N = Integer.parseInt(br.readLine());
         StringTokenizer st = new StringTokenizer(br.readLine());
         for(int i = 0 ; i < N ; i ++){
-            arr.add(Integer.parseInt(st.nextToken()));
+            arr[Integer.parseInt(st.nextToken())+1000000]++;
         }
-        Collections.sort(arr);
 
         StringBuilder sb = new StringBuilder();
-        sb.append(arr.get(0)).append(" ").append(arr.get(arr.size()-1));
+        for(int i = 0 ; i < 2000000 ; i++){
+            if(arr[i] != 0){
+                sb.append(i-1000000).append(" ");
+                break;
+            }
+        }
+        for(int i = 2000000 ; i >= 0 ; i--){
+            if(arr[i] != 0){
+                sb.append(i-1000000);
+                break;
+            }
+        }
         System.out.println(sb);
-
-
     }
 }
