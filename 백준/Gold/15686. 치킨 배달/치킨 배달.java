@@ -45,12 +45,12 @@ public class Main {
                     min = Math.min(min, getDistance(house, chicken));
                 }
                 min_chicken_distance += min;
+                if(min_chicken_distance > answer) return;
             }
             answer = Math.min(answer, min_chicken_distance);
         }else{
             for(int i = start ; i < chickens.size() ; i++){
-                int[] next = chickens.get(i);
-                selected_chicken[depth] = next;
+                selected_chicken[depth] = chickens.get(i);
                 DFS(depth + 1, i + 1);
                 selected_chicken[depth] = null;
             }
