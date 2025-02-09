@@ -1,73 +1,58 @@
-
-import java.util.ArrayList;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.util.Arrays;
-import java.util.Scanner;
+import java.util.HashSet;
+import java.util.StringTokenizer;
 
-// N과 M 9번
 public class Main {
-
-    static ArrayList<int[]> set;
-    static int[] comb, input;
-    static int N, K;
+    static int N, M;
     static StringBuilder sb;
+    static HashSet<String> isIn;
+    static int[] arr, input;
     static boolean[] visited;
+    public static void main(String[] args) throws Exception {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        sb = new StringBuilder();
 
-    public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
-        set = new ArrayList<>();
-        N = sc.nextInt();
-        K = sc.nextInt();
-        comb = new int[K];
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        N = Integer.parseInt(st.nextToken());
+        M = Integer.parseInt(st.nextToken());
+
         input = new int[N];
         visited = new boolean[N];
-        sb = new StringBuilder();
-        for(int i = 0 ; i < N ; i++) {
-            input[i] = sc.nextInt();
+        arr = new int[M];
+        isIn = new HashSet<>();
+
+        st = new StringTokenizer(br.readLine());
+        for(int i = 0 ; i < N ; i++){
+            input[i] = Integer.parseInt(st.nextToken());
         }
 
         Arrays.sort(input);
-        recur(0);
+        DFS(0);
         System.out.println(sb);
+
     }
 
-    private static void recur(int depth) {
-        if(depth == K) {
-            // 이미 만들어진 같은 내용의 순열이 있는지 검사
-            boolean diff = true;
-            for (int[] ints : set) {
-                boolean same = true;
-                for(int i = 0 ; i < K ; i++){
-                    if(ints[i] != comb[i]){
-                        same = false;
-                        break;
-                    }
-                }
-                if(same) diff = false;
+    public static void DFS(int depth){
+        if(depth == M){
+            StringBuilder comb = new StringBuilder();
+            for (int i : arr) {
+                comb.append(i).append(" ");
             }
-
-            // 새롭게 탄생한 순열이라면
-            if(diff){
-                set.add(Arrays.copyOf(comb, comb.length));
-                for (int i : comb) {
-                    sb.append(i).append(" ");
-                }
-                sb.append("\n");
+            if(!isIn.contains(comb.toString())){
+                isIn.add(comb.toString());
+                sb.append(comb).append("\n");
             }
-        }
-
-        // K개로 구성된 조합 만들기
-        else {
-            for(int i = 0 ; i < N ; i++) {
+        } else {
+            for(int i = 0 ; i < N ; i++){
                 if(visited[i]) continue;
-                comb[depth] = input[i];
                 visited[i] = true;
-                recur(depth + 1);
+                arr[depth] = input[i];
+                DFS(depth + 1);
+                arr[depth] = 0;
                 visited[i] = false;
-                comb[depth] = 0;
             }
         }
-
     }
-
-
 }
