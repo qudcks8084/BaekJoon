@@ -3,80 +3,86 @@ import java.io.InputStreamReader;
 import java.util.StringTokenizer;
 
 public class Main {
-    static int[][] board = new int[9][9];
+    static int numOfBlank, N = 9;
+    static int[][] map = new int[N][N];
+    static int[][] blanks;
+    static boolean find;
 
     public static void main(String[] args) throws Exception {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
-        for(int i = 0; i < 9; i++) {
-            StringTokenizer st = new StringTokenizer(br.readLine());
-            for(int j = 0; j < 9; j++) {
-                board[i][j] = Integer.parseInt(st.nextToken());
+        StringTokenizer st;
+        numOfBlank = 0;
+        for(int c = 0; c < N; c++) {
+            st = new StringTokenizer(br.readLine());
+            for(int r = 0; r < N; r++) {
+                map[c][r] = Integer.parseInt(st.nextToken());
+                if(map[c][r] == 0) numOfBlank++;
             }
         }
 
-        solveSudoku(0, 0);
+        blanks = new int[numOfBlank][2];
+
+        int index = 0;
+        for(int c = 0; c < N; c++) {
+            for(int r = 0; r < N; r++) {
+                if(map[c][r] == 0) {
+                    blanks[index++] = new int[]{c, r};
+                }
+            }
+        }
+
+        backTracking(0);
     }
 
-    static boolean solveSudoku(int row, int col) {
-        if(col == 9) {
-            row++;
-            col = 0;
+    public static void backTracking(int depth) {
+        if(find) return;
+        if(depth == numOfBlank) {
+            find = true;
+            StringBuilder sb = new StringBuilder();
+            for(int c = 0; c < N; c++) {
+                for(int r = 0; r < N; r++) {
+                    sb.append(map[c][r]).append(" ");
+                }
+                sb.append("\n");
+            }
+            System.out.print(sb);
+            return;
         }
 
-        if(row == 9) {
-            printBoard();
-            return true;
-        }
-
-        if(board[row][col] != 0) {
-            return solveSudoku(row, col + 1);
-        }
+        int row = blanks[depth][0];
+        int col = blanks[depth][1];
 
         for(int num = 1; num <= 9; num++) {
             if(isValid(row, col, num)) {
-                board[row][col] = num;
-                if(solveSudoku(row, col + 1)) {
-                    return true;
-                }
-                board[row][col] = 0;
+                map[row][col] = num;
+                backTracking(depth + 1);
+                if(find) return;
+                map[row][col] = 0;
             }
         }
-
-        return false;
     }
 
-    static boolean isValid(int row, int col, int num) {
-        // Check row
+    public static boolean isValid(int row, int col, int num) {
+        // 가로 검사
         for(int x = 0; x < 9; x++) {
-            if(board[row][x] == num) return false;
+            if(map[row][x] == num) return false;
         }
 
-        // Check column
+        // 세로 검사
         for(int x = 0; x < 9; x++) {
-            if(board[x][col] == num) return false;
+            if(map[x][col] == num) return false;
         }
 
-        // Check 3x3 box
-        int startRow = row - row % 3;
-        int startCol = col - col % 3;
-        for(int i = 0; i < 3; i++) {
-            for(int j = 0; j < 3; j++) {
-                if(board[i + startRow][j + startCol] == num) return false;
+        // 3x3 박스 검사
+        int startRow = (row / 3) * 3;
+        int startCol = (col / 3) * 3;
+        for(int i = startRow; i < startRow + 3; i++) {
+            for(int j = startCol; j < startCol + 3; j++) {
+                if(map[i][j] == num) return false;
             }
         }
 
         return true;
-    }
-
-    static void printBoard() {
-        StringBuilder sb = new StringBuilder();
-        for(int i = 0; i < 9; i++) {
-            for(int j = 0; j < 9; j++) {
-                sb.append(board[i][j]).append(" ");
-            }
-            sb.append("\n");
-        }
-        System.out.print(sb);
     }
 }
