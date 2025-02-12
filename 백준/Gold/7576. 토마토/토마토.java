@@ -15,7 +15,6 @@ public class Main {
 		int H = Integer.parseInt(st.nextToken());
 		
 		int[][] map = new int[H][W];
-		boolean[][] visited = new boolean[H][W];
 		
 		ArrayList<int[]> tomatos  = new ArrayList<>(); // 시작 토마토를 저장
 		int numOfNotGoodTomato = 0; // 정답 확인용 덜익은 토마토의 개수 저장
@@ -32,7 +31,6 @@ public class Main {
 		ArrayDeque<int[]> q = new ArrayDeque<>();
 		for( int[] tomato : tomatos) {
 			q.add(tomato);
-			visited[tomato[0]][tomato[1]] = true;
 		}
 		
 		
@@ -47,9 +45,8 @@ public class Main {
 					int n_c = cur[0] + dc[j];
 					int n_r = cur[1] + dr[j];
 					if(n_c < 0 || n_c >= H || n_r < 0 || n_r >= W) continue;
-					if(!visited[n_c][n_r] && map[n_c][n_r] == 0) {
+					if(map[n_c][n_r] == 0) {
 						numOfNotGoodTomato--;
-						visited[n_c][n_r] = true;
 						map[n_c][n_r] = 1;
 						q.offer(new int[] {n_c, n_r});
 					}
