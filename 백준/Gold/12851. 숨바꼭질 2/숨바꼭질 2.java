@@ -1,13 +1,15 @@
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.util.ArrayDeque;
-import java.util.HashSet;
-import java.util.Scanner;
+import java.util.StringTokenizer;
 
 public class Main {
-    public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
+    public static void main(String[] args) throws Exception {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine());
         StringBuilder sb = new StringBuilder();
-        int K = sc.nextInt();
-        int N = sc.nextInt();
+        int K = Integer.parseInt(st.nextToken());
+        int N = Integer.parseInt(st.nextToken());
 
         // 중요 * 무조건 이동범위 최대값으로 설정
         boolean[] visited = new boolean[1000001];
@@ -23,7 +25,6 @@ public class Main {
 
         ArrayDeque<Integer> q = new ArrayDeque<>();
         q.offer(K); // 수빈이의 위치 투입
-        HashSet<Integer> set;
         while (!q.isEmpty()) {
             time++;
             int len = q.size();
