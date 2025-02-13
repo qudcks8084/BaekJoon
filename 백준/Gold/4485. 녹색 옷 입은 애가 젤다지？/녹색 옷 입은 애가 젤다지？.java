@@ -9,25 +9,8 @@ public class Main {
 	static int N;
 	static int[][] map;
 	static int[][] cost;
-	
-	static class Cell implements Comparable<Cell>{
-		int c,r;
-		int cost;
-		
-		public Cell(int c, int r, int cost) {
-			this.c = c;
-			this.r = r;
-			this.cost = cost;
-		}
-
-		@Override
-		public int compareTo(Cell o) {
-			return Integer.compare(this.cost, o.cost);
-		}
-		
-	}
-	
 	public static void main(String[] args) throws Exception {
+		
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		StringBuilder sb = new StringBuilder();
 		int numOfProblem = 1;
@@ -53,23 +36,25 @@ public class Main {
 			numOfProblem++;
 		}
 		System.out.println(sb);
+		
 	}
 	
 	static int[] dr = {-1,1,0,0};
 	static int[] dc = {0,0,-1,1};
 	private static int bfs() {
-		PriorityQueue<Cell> pq = new PriorityQueue<>();
-		pq.offer(new Cell(0,0,map[0][0]));
+		PriorityQueue<int[]> pq = new PriorityQueue<>(
+				(o1, o2) -> Integer.compare(o1[2], o2[2]));
+		pq.offer(new int[] {0,0,map[0][0]});
 		cost[0][0] = map[0][0];
 		while(!pq.isEmpty()) {
-			Cell cur = pq.poll();
+			int[] cur = pq.poll();
 			for(int i = 0 ; i < 4 ; i++) {
-				int n_c = cur.c + dc[i];
-				int n_r = cur.r + dr[i];
+				int n_c = cur[0] + dc[i];
+				int n_r = cur[1] + dr[i];
 				if(n_c < 0 || n_c >= N || n_r < 0 || n_r >= N) continue;
-				if(cost[n_c][n_r] > cost[cur.c][cur.r] + map[n_c][n_r]) {
-					cost[n_c][n_r] = cost[cur.c][cur.r] + map[n_c][n_r];
-					pq.offer(new Cell(n_c, n_r, cost[n_c][n_r]));
+				if(cost[n_c][n_r] > cur[2] + map[n_c][n_r]) {
+					cost[n_c][n_r] = cur[2] + map[n_c][n_r];
+					pq.offer(new int[] {n_c, n_r, cost[n_c][n_r]});
 				}
 			}
 		}
