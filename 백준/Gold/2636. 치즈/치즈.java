@@ -78,18 +78,4 @@ public class Main {
 		}
 		return melting;
 	}
-	
-	// 디버깅용 출력 함수
-	public static void print() {
-		StringBuilder sb = new StringBuilder();
-		for(int i = 0 ; i < H ;  i++) {
-			for(int j = 0 ; j < W ; j++) {
-				sb.append(map[i][j] ? "1 " : "0 ");
-			}
-			sb.append("\n");
-		}
-		sb.append("\n");
-		System.out.println(sb);
-	}
-
 }
