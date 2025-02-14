@@ -3,7 +3,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayDeque;
 import java.util.StringTokenizer;
 
-public class Main {
+public class Main{
 	
 	static int[] dc = {-1, 0, 1, 0};
 	static int[] dr = {0, 1, 0, -1};
@@ -43,24 +43,6 @@ public class Main {
 			int horse = cur[2];
 			int time = cur[3] + 1;
 			
-			// 말의 이동 방식이 남아있어서 이동하는 경우
-			if (horse > 0) {
-				for (int i = 0; i < 8; i++) {
-					int h_c = cur[0] + hc[i];
-					int h_r = cur[1] + hr[i];
-					if (h_c < 0 || h_c >= H || h_r < 0 || h_r >= W)
-						continue;
-					if (visited[h_c][h_r][horse-1] || map[h_c][h_r])
-						continue;
-					if (h_c == H - 1 && h_r == W - 1) { // 정답을 찾은 경우
-						System.out.println(time);
-						return;
-					}
-					visited[h_c][h_r][horse-1] = true;
-					q.offer(new int[] { h_c, h_r, horse-1, time});
-				}
-			}
-			
 			// 일단 인간 폼으로 찾아봐
 			for(int i = 0 ; i < 4 ; i++) {
 				int n_c = cur[0] + dc[i];
@@ -75,7 +57,22 @@ public class Main {
 				q.offer(new int[] {n_c, n_r, horse, time});
 			}
 			
-			
+			// 말의 이동 방식이 남아있어서 이동하는 경우
+			if(horse > 0) {
+				horse--;
+				for(int i = 0 ; i < 8 ; i++) {
+					int h_c = cur[0] + hc[i];
+					int h_r = cur[1] + hr[i];
+					if(h_c < 0 || h_c >= H || h_r < 0 || h_r >= W ) continue;
+					if(visited[h_c][h_r][horse] || map[h_c][h_r]) continue;
+					if(h_c == H-1 && h_r == W-1) { // 정답을 찾은 경우
+						System.out.println(time);
+						return;
+					}
+					visited[h_c][h_r][horse] = true;
+					q.offer(new int[] {h_c, h_r, horse, time});
+				}
+			}
 		}
 		
 		System.out.println("-1");
