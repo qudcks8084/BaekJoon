@@ -1,81 +1,88 @@
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayDeque;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.PriorityQueue;
+import java.util.Queue;
 import java.util.StringTokenizer;
 
-public class Main{
-	
-	static int[] dc = {-1, 0, 1, 0};
-	static int[] dr = {0, 1, 0, -1};
-	
-	static int[] hc = {2, 1, -1, -2, -2, -1, 1, 2};
-	static int[] hr = {1, 2, 2, 1, -1, -2, -2, -1};
-	
-	public static void main(String[] args) throws Exception {
+public class Main {
+	static int map[][];
+	static int N, M, K;
+	static int[] dr = { -1, 1, 0, 0 };
+	static int[] dc = { 0, 0, -1, 1 };
+	static int[] hr = { -2, -2, -1, -1, 1, 1, 2, 2 };
+	static int[] hc = { -1, 1, -2, 2, -2, 2, -1, 1 };
+
+	public static void main(String[] args) throws IOException {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-		
-		int K = Integer.parseInt(br.readLine());
+		K = Integer.parseInt(br.readLine());
 		StringTokenizer st = new StringTokenizer(br.readLine());
-		
-		int W = Integer.parseInt(st.nextToken());
-		int H = Integer.parseInt(st.nextToken());
-		
-		boolean[][] map = new boolean[H][W];
-		boolean[][][] visited = new boolean[H][W][K+1];
-		
-		for(int c = 0 ; c < H ; c++) {
+		M = Integer.parseInt(st.nextToken());
+		N = Integer.parseInt(st.nextToken());
+
+		map = new int[N][M];
+
+		for (int i = 0; i < N; i++) {
 			st = new StringTokenizer(br.readLine());
-			for(int r = 0 ; r < W ; r++) {
-				map[c][r] = st.nextToken().equals("1");
+			for (int j = 0; j < M; j++) {
+				map[i][j] = Integer.parseInt(st.nextToken());
 			}
 		}
-		
-		if(W == 1 && H == 1) {
-			System.out.println(0);
-			return;
-		}
-		
-		ArrayDeque<int[]> q = new ArrayDeque<>();
-		visited[0][0][0] = true;
-		q.offer(new int[] {0,0,K,0});
-		while(!q.isEmpty()) {
-			int[] cur = q.poll();
-			int horse = cur[2];
-			int time = cur[3] + 1;
+//		System.out.println(Arrays.deepToString(map));
+
+		System.out.println(bfs());
+
+	}
+
+	private static int bfs() {
+		Queue<int[]> queue = new LinkedList<>();
+//		PriorityQueue<int[]> queue = new PriorityQueue<>((o1, o2) -> Integer.compare(o1[0] + o1[1], o2[0] + o2[1]));
+		queue.add(new int[] { 0, 0, 0, K + 2 }); // r, c, cnt, 말 남은 횟수
+		map[0][0] = 2;
+
+		while (!queue.isEmpty()) {
+//			for (int i = 0; i < N; i++) {
+//				System.out.println(Arrays.toString(map[i]));
+//			}
+//			System.out.println();
 			
-			// 일단 인간 폼으로 찾아봐
-			for(int i = 0 ; i < 4 ; i++) {
-				int n_c = cur[0] + dc[i];
-				int n_r = cur[1] + dr[i];
-				if(n_c < 0 || n_c >= H || n_r < 0 || n_r >= W ) continue;
-				if(visited[n_c][n_r][horse] || map[n_c][n_r]) continue;
-				if(n_c == H-1 && n_r == W-1) { // 정답을 찾은 경우
-					System.out.println(time);
-					return;
-				}
-				visited[n_c][n_r][horse] = true;
-				q.offer(new int[] {n_c, n_r, horse, time});
+			int[] q = queue.poll();
+			if (q[0] == N - 1 && q[1] == M - 1) {
+				return q[2];
 			}
-			
-			// 말의 이동 방식이 남아있어서 이동하는 경우
-			if(horse > 0) {
-				horse--;
-				for(int i = 0 ; i < 8 ; i++) {
-					int h_c = cur[0] + hc[i];
-					int h_r = cur[1] + hr[i];
-					if(h_c < 0 || h_c >= H || h_r < 0 || h_r >= W ) continue;
-					if(visited[h_c][h_r][horse] || map[h_c][h_r]) continue;
-					if(h_c == H-1 && h_r == W-1) { // 정답을 찾은 경우
-						System.out.println(time);
-						return;
+
+            if (q[3] > 2) {
+				for (int d = 0; d < 8; d++) {
+					int r = q[0] + hr[d];
+					int c = q[1] + hc[d];
+					if (!check(r, c) || map[r][c] == 1)
+						continue;
+					if (map[r][c] == 0 || map[r][c] < q[3] - 1) {
+						queue.offer(new int[] { r, c, q[2] + 1, q[3] - 1 });
+						map[r][c] = q[3] - 1;
 					}
-					visited[h_c][h_r][horse] = true;
-					q.offer(new int[] {h_c, h_r, horse, time});
 				}
 			}
+            
+			for (int d = 0; d < 4; d++) {
+				int r = q[0] + dr[d];
+				int c = q[1] + dc[d];
+				if (!check(r, c) || map[r][c] == 1)
+					continue;
+				if (map[r][c] == 0 || map[r][c] < q[3]) {
+					queue.offer(new int[] { r, c, q[2] + 1, q[3] });
+					map[r][c] = q[3];
+				}
+			}
+			
 		}
-		
-		System.out.println("-1");
+		return -1;
+	}
+
+	private static boolean check(int r, int c) {
+		return r >= 0 && r < N && c >= 0 && c < M;
 	}
 
 }
