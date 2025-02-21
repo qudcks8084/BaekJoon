@@ -1,90 +1,71 @@
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.util.ArrayDeque;
+import java.util.PriorityQueue;
 import java.util.StringTokenizer;
 
 public class Main {
-
-    static int H, W;
-    static int s_c, s_r;
-    static int t_c, t_r;
-    static boolean[][] map, visited;
+    static int[] dc = {-1, 0, 1, 0};
+    static int[] dr = {0, 1, 0, -1};
 
     public static void main(String[] args) throws Exception {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
         StringTokenizer st = new StringTokenizer(br.readLine());
-
-        H = Integer.parseInt(st.nextToken());
-        W = Integer.parseInt(st.nextToken());
-        map = new boolean[H][W];
+        int H = Integer.parseInt(st.nextToken());
+        int W = Integer.parseInt(st.nextToken());
 
         st = new StringTokenizer(br.readLine());
-        s_c = Integer.parseInt(st.nextToken()) - 1;
-        s_r = Integer.parseInt(st.nextToken()) - 1;
-        t_c = Integer.parseInt(st.nextToken()) - 1;
-        t_r = Integer.parseInt(st.nextToken()) - 1;
+        int s_c = Integer.parseInt(st.nextToken()) - 1;
+        int s_r = Integer.parseInt(st.nextToken()) - 1;
+        int t_c = Integer.parseInt(st.nextToken()) - 1;
+        int t_r = Integer.parseInt(st.nextToken()) - 1;
 
-        for(int c = 0 ; c < H ; c++){
-            char[] line = br.readLine().toCharArray();
-            for(int r = 0 ; r < W ; r++){
-                map[c][r] = line[r] == '1';
-            }
+        char[][] map = new char[H][W];
+        for (int i = 0; i < H; i++) {
+            map[i] = br.readLine().toCharArray();
         }
 
+        // visited[row][col][time]
+        boolean[][][] visited = new boolean[H][W][H + W - 1];
+        PriorityQueue<int[]> pq = new PriorityQueue<>((a, b) -> a[2] - b[2]);
 
+        // 시작점에서 4방향으로 큐에 삽입
+        pq.offer(new int[]{s_c, s_r, 0});
+        visited[s_c][s_r][0] = true;
 
-        int time = 1;
-        while(true){
-            visited = new boolean[H][W];
-            boolean killed = attack();
-            if(killed) break;
-            else time++;
-        }
-
-        System.out.println(time);
-    }
-
-    static int[] dc = {-1, 0, 1 ,0};
-    static int[] dr = {0, 1, 0, -1};
-    static int[] dd = {0, 1, 2, 3};
-    public static boolean attack(){
-        ArrayDeque<int[]> q = new ArrayDeque<>();
-        visited[s_c][s_r] = true;
-        for (int direction : dd) { // 방향별로 공격을 넣어
-            q.offer(new int[]{s_c, s_r, direction});
-        }
-        while (!q.isEmpty()) {
-            int[] cur = q.poll();
+        while (!pq.isEmpty()) {
+            int[] cur = pq.poll();
             int c = cur[0];
             int r = cur[1];
-            int d = cur[2];
-            while(true){ // 방향에 맞춰서 사람을 찾거나 or 끝지점까지 공격을 전달
-                int n_c = c + dc[d];
-                int n_r = r + dr[d];
-                if(n_c == t_c && n_r == t_r){ // 종료 조건
-                    return true;
-                }
-                if(n_c < 0 || n_c >= H || n_r < 0 || n_r >= W) break; // 경계값을 넘어가면 종료
-                if(visited[n_c][n_r]) break; // 이미 공격을 받았던 곳이여도 종료
-                if(map[n_c][n_r]){ // 사람을 찾은 경우
-                    visited[n_c][n_r] = true;
-                    map[n_c][n_r] = false;
-                    break;
+            int time = cur[2];
+
+            for (int d = 0; d < 4; d++) {
+                int nc = c + dc[d];
+                int nr = r + dr[d];
+
+                if (nc < 0 || nc >= H || nr < 0 || nr >= W) continue;
+
+                // 목표지점 도달
+                if (nc == t_c && nr == t_r) {
+                    System.out.println(time + 1);
+                    return;
                 }
 
-                // 사람을 못찾은 경우
-                visited[n_c][n_r] = true;
-                for (int direction : dd) {
-                    q.offer(new int[]{n_c, n_r, direction});
+                // 다음 위치가 '1'인 경우
+                if (map[nc][nr] == '1') {
+                    if (time + 1 < H + W - 1 && !visited[nc][nr][time + 1]) {
+                        visited[nc][nr][time + 1] = true;
+                        pq.offer(new int[]{nc, nr, time + 1});
+                    }
                 }
-                // 사람을 못찾았다면 더 이동
-                c = n_c;
-                r = n_r;
+                // 다음 위치가 '0'인 경우
+                else if (map[nc][nr] == '0') {
+                    if (!visited[nc][nr][time]) {
+                        visited[nc][nr][time] = true;
+                        pq.offer(new int[]{nc, nr, time});
+                    }
+                }
             }
         }
-
-        // 해당 공격에서는 못잡음
-        return false;
     }
 }
