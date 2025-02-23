@@ -2,7 +2,6 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.StringTokenizer;
 
 public class Main {
@@ -20,8 +19,8 @@ public class Main {
         W = Integer.parseInt(st.nextToken());
         map = new char[H][W];
         visited = new boolean[H][W];
-        ArrayList<int[]> fire = new ArrayList<>();
-
+        ArrayDeque<int[]> q = new ArrayDeque<>();
+        
         for(int c = 0 ; c < H ; c++){
             char[] input = br.readLine().toCharArray();
             for (int r = 0; r < W; r++) {
@@ -30,16 +29,13 @@ public class Main {
                     j_c = c;
                     j_r = r;
                 }
-                if(map[c][r] == 'F'){
-                    fire.add(new int[]{c, r});
+                if(map[c][r] == 'F'){ // 먼저 불을 넣어
+                    q.offer(new int[]{c, r});
+                    visited[c][r] = true;
                 }
             }
         }
-        ArrayDeque<int[]> q = new ArrayDeque<>();
-        for (int[] fire_spot : fire) { // 먼저 불을 넣어
-            q.offer(fire_spot);
-            visited[fire_spot[0]][fire_spot[1]] = true;
-        }
+
         q.offer(new int[]{j_c, j_r}); // 다음에 지훈이가 가
         visited[j_c][j_r] = true;
 
