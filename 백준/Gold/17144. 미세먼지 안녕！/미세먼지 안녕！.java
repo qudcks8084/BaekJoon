@@ -1,7 +1,6 @@
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.util.ArrayDeque;
 import java.util.StringTokenizer;
 
 public class Main {
@@ -90,7 +89,6 @@ public class Main {
 		int s_r = purifier[1];
 		int c = s_c - 1;
 		int r = s_r;
-		ArrayDeque<Integer> q = new ArrayDeque<>();
 		for(int d = 0 ; d < 4 ; d++) {
 			while(true) {
 				int n_c = c + dc[d];
@@ -98,32 +96,16 @@ public class Main {
 				// 경계값을 만나면 종료합니다.
 				if(n_c < 0 || n_c > s_c || n_r < 0 || n_r >= W) break;
 				// 다시 공기청정기를 만나면 종료합니다.
-				if(n_c == s_c && n_r == s_r) break;
-				q.offer(map[n_c][n_r]);
+				if(n_c == s_c && n_r == s_r) {
+					map[c][r] = 0;
+					break;
+				} 
+				map[c][r] = map[n_c][n_r];
 				c = n_c;
 				r = n_r;
 			}
 		}
 		
-		// 큐의 맨 뒤에 0을 하나 추가
-		q.offer(0);
-		
-		// 다시 값 넣어주기 
-		c = s_c;
-		r = s_r;
-		for(int d = 0 ; d < 4 ; d++) {
-			while(true) {
-				int n_c = c + dc[d];
-				int n_r = r + dr[d];
-				// 경계값을 만나면 종료합니다.
-				if(n_c < 0 || n_c > s_c || n_r < 0 || n_r >= W) break;
-				// 다시 공기청정기를 만나면 종료합니다.
-				if(n_c == s_c && n_r == s_r) break;
-				map[n_c][n_r] = q.poll();
-				c = n_c;
-				r = n_r;
-			}
-		}
 	}
 	
 	// 아래쪽 배열 돌리기
@@ -134,7 +116,6 @@ public class Main {
 		int s_r = purifier[3];
 		int c = s_c + 1;
 		int r = s_r;
-		ArrayDeque<Integer> q =  new ArrayDeque<>();
 		for(int d : down_order) {
 			while(true) {
 				int n_c = c + dc[d];
@@ -142,42 +123,15 @@ public class Main {
 				// 경계값을 만나면 종료합니다.
 				if(n_c < s_c || n_c >= H || n_r < 0 || n_r >= W) break;
 				// 다시 공기청정기를 만나면 종료합니다.
-				if(n_c == s_c && n_r == s_r) break;
-				q.offer(map[n_c][n_r]);
+				if(n_c == s_c && n_r == s_r) {
+					map[c][r] = 0;
+					break;
+				} 
+				map[c][r] = map[n_c][n_r];
 				c = n_c;
 				r = n_r;
 			}
 		}
+	}
 
-		// 큐의 맨 뒤에 0을 하나 추가
-		q.offer(0);
-		
-		// 다시 값 넣어주기
-		c = s_c;
-		r = s_r;
-		for(int d : down_order) {
-			while(true) {
-				int n_c = c + dc[d];
-				int n_r = r + dr[d];
-				// 경계값을 만나면 종료합니다.
-				if(n_c < s_c || n_c >= H || n_r < 0 || n_r >= W) break;
-				// 다시 공기청정기를 만나면 종료합니다.
-				if(n_c == s_c && n_r == s_r) break;
-				map[n_c][n_r] = q.poll();
-				c = n_c;
-				r = n_r;
-			}
-		}
-	}
-	
-	public static void print() {
-		StringBuilder sb = new StringBuilder();
-		for(int c = 0 ; c < H ; c++) {
-			for(int r = 0 ; r < W ; r++) {
-				sb.append(map[c][r]).append("\t");
-			}
-			sb.append("\n");
-		}
-		System.out.println(sb);
-	}
 }
