@@ -8,7 +8,7 @@ public class Main {
     static int N, M, answer;
     static ArrayList<int[]> chickens;
     static ArrayList<int[]> houses;
-    static int[][] selected_chicken;
+
     public static void main(String[] args) throws Exception {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
@@ -16,7 +16,6 @@ public class Main {
         N = Integer.parseInt(st.nextToken());
         M = Integer.parseInt(st.nextToken());
 
-        selected_chicken = new int[M][2];
         chickens = new ArrayList<>();
         houses = new ArrayList<>();
 
@@ -31,34 +30,50 @@ public class Main {
         }
 
         answer = Integer.MAX_VALUE;
-        DFS(0, 0);
+        bitmaskCombination();
         System.out.println(answer);
-
     }
 
-    public static void DFS(int depth, int start){
-        if(depth == M){ // 치킨집 조합이 완성된 경우
-            int min_chicken_distance = 0;
-            for (int[] house : houses) {
-                int min = Integer.MAX_VALUE;
-                for(int[] chicken : selected_chicken){
-                    min = Math.min(min, getDistance(house, chicken));
+    public static void bitmaskCombination() {
+        int chickenCount = chickens.size();
+
+        // 비트마스크로 모든 조합 확인 (1 << chickenCount는 2^chickenCount)
+        for (int i = 0; i < (1 << chickenCount); i++) {
+            // 선택된 비트(1)의 수가 M과 같은 경우만 처리
+            if (Integer.bitCount(i) == M) {
+                // 선택된 치킨집 식별
+                ArrayList<int[]> selectedChickens = new ArrayList<>();
+                for (int j = 0; j < chickenCount; j++) {
+                    // j번째 비트가 1인지 확인
+                    if ((i & (1 << j)) != 0) {
+                        selectedChickens.add(chickens.get(j));
+                    }
                 }
-                min_chicken_distance += min;
-                if(min_chicken_distance > answer) return;
-            }
-            answer = Math.min(answer, min_chicken_distance);
-        }else{
-            for(int i = start ; i < chickens.size() ; i++){
-                selected_chicken[depth] = chickens.get(i);
-                DFS(depth + 1, i + 1);
-                selected_chicken[depth] = null;
+
+                // 치킨 거리 계산
+                calculateChickenDistance(selectedChickens);
             }
         }
     }
 
-    public static int getDistance(int[] chicken, int[] house){
-        return Math.abs(chicken[0] - house[0]) + Math.abs(chicken[1] - house[1]);
+    public static void calculateChickenDistance(ArrayList<int[]> selectedChickens) {
+        int minChickenDistance = 0;
+
+        for (int[] house : houses) {
+            int min = Integer.MAX_VALUE;
+            for (int[] chicken : selectedChickens) {
+                min = Math.min(min, getDistance(house, chicken));
+            }
+            minChickenDistance += min;
+
+            // 이미 최소값보다 크면 더 계산할 필요 없음
+            if (minChickenDistance > answer) return;
+        }
+
+        answer = Math.min(answer, minChickenDistance);
     }
 
+    public static int getDistance(int[] house, int[] chicken) {
+        return Math.abs(chicken[0] - house[0]) + Math.abs(chicken[1] - house[1]);
+    }
 }
