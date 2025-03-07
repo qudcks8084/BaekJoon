@@ -11,8 +11,7 @@ public class Main {
 
         N = Integer.parseInt(br.readLine());
 
-        Integer[] input = new Integer[3];
-        Arrays.fill(input, 0);
+        int[] input = new int[3];
 
         StringTokenizer st = new StringTokenizer(br.readLine());
         for(int i = 0 ; i < N ; i++){
@@ -21,10 +20,8 @@ public class Main {
 
         // 60개를 나타내는 차원
         boolean[] visited = new boolean[1_000_000];
-        // 오름차순으로 정렬
-        Arrays.sort(input, Collections.reverseOrder());
 
-        ArrayDeque<Integer[]> q = new ArrayDeque<>();
+        ArrayDeque<int[]> q = new ArrayDeque<>();
         q.offer(input);
         visited[input[0] * 10_000 + input[1] * 100 + input[2]] = true;
 
@@ -32,15 +29,11 @@ public class Main {
         while (!q.isEmpty()) {
             int len = q.size();
             for(int l = 0 ; l < len ; l++){
-                Integer[] cur = q.poll();
-
-                // 일단 정렬을 해
-                Arrays.sort(cur, Collections.reverseOrder());
+                int[] cur = q.poll();
 
                 // 공격을 해
                 for(int[] minus : attack){
-                    Integer[] next = new Integer[3];
-                    Arrays.fill(next, 0);
+                    int[] next = new int[3];
                     for(int i = 0 ; i < N ; i++){
                         next[i] = Math.max(cur[i] - minus[i], 0); // 체력이 -가 되는 것을 방지
                     }
@@ -64,7 +57,7 @@ public class Main {
         }
     }
 
-    public static int getIndex(Integer[] target){
+    public static int getIndex(int[] target){
         return target[0] * 10_000 + target[1] * 100 + target[2];
     }
 }
