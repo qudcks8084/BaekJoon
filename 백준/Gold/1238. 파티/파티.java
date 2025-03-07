@@ -23,7 +23,9 @@ public class Main {
 
     static int N, M, X;
     static ArrayList<E>[] adjList;
-    static int[][] dp;
+    static ArrayList<E>[] adjList_reverse;
+    static int[] dp;
+    static int[] dp_reverse;
     static final int INF = Integer.MAX_VALUE;
     public static void main(String[] args) throws Exception {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -35,9 +37,13 @@ public class Main {
 
         // 각각의 도시에서 출발하는 edge를 저장하기 위한 adjList를 생성
         adjList = new ArrayList[N];
+        adjList_reverse = new ArrayList[N];
         for(int i = 0 ; i < N ; i++){
             adjList[i] = new ArrayList<>();
+            adjList_reverse[i] = new ArrayList<>();
         }
+
+
 
         for(int i = 0 ; i < M ; i++){
             st = new StringTokenizer(br.readLine());
@@ -45,27 +51,31 @@ public class Main {
             int e = Integer.parseInt(st.nextToken()) - 1;
             int w = Integer.parseInt(st.nextToken());
             adjList[s].add(new E(e, w));
+            adjList_reverse[e].add(new E(s, w));
         }
 
         // 각 배열간의 최단 거리를 저장할 배열 선언
-        dp = new int[N][N];
-        for(int start = 0 ; start < N ; start++){
-            Arrays.fill(dp[start], INF); // dijkstra를 위해서 각 최단거리 배열을 INF로 초기화
-            dijkstra(start);
-        }
+        dp = new int[N];
+        dp_reverse = new int[N];
+
+        Arrays.fill(dp, INF);
+        Arrays.fill(dp_reverse, INF);
+
+        dijkstra(adjList, dp);
+        dijkstra(adjList_reverse, dp_reverse);
 
         // 최종 정답 구하기
         int max_distance = -1;
         for(int i = 0 ; i < N ; i++){
             if(i == X) continue; // 파티 위치는 제외
-            max_distance = Math.max(max_distance, dp[i][X] + dp[X][i]);
+            max_distance = Math.max(max_distance, dp[i] + dp_reverse[i]);
         }
 
         System.out.println(max_distance);
 
     }
 
-    public static void dijkstra(int start){
+    public static void dijkstra(ArrayList<E>[] adjList, int[] distance){
         // 간선으로 우선순위 정렬을 위한 우선순위 큐 생성
         PriorityQueue<E> pq = new PriorityQueue<>();
 
@@ -73,8 +83,8 @@ public class Main {
         boolean[] visited = new boolean[N];
 
         // 자기 자신부터 시작
-        dp[start][start] = 0;
-        pq.offer(new E(start, start));
+        distance[X] = 0;
+        pq.offer(new E(X, X));
 
         while (!pq.isEmpty()) {
             E cur = pq.poll();
@@ -86,9 +96,9 @@ public class Main {
 
             // 연결되는 다음 통로의 값을 최신화
             for(E next : adjList[v]){
-                if(dp[start][next.v] > next.w + dp[start][v]){
-                    dp[start][next.v] = next.w + dp[start][v];
-                    pq.offer(new E(next.v, dp[start][next.v]));
+                if(distance[next.v] > next.w + distance[v]){
+                    distance[next.v] = next.w + distance[v];
+                    pq.offer(new E(next.v, distance[next.v]));
                 }
             }
         }
