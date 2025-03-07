@@ -14,9 +14,9 @@ public class Main {
         }
 
         ArrayDeque<Character> even_stack = new ArrayDeque<>();
-        ArrayDeque<Character> odd_stack = new ArrayDeque<>();
         StringBuilder sb = new StringBuilder();
         int numOfOdd = 0;
+        char odd = 'A';
         for(int i = 0 ; i < frequency.length ; i++){
             int numOfAlphabet = frequency[i];
             if(numOfAlphabet == 0) continue;
@@ -27,23 +27,22 @@ public class Main {
                     even_stack.push((char)('A' + i));
                 }
             }else { // 홀수 라면
+                if(numOfOdd == 1){
+                    System.out.println("I'm Sorry Hansoo");
+                    return;
+                }
                 for(int j = 0 ; j < numOfAlphabet / 2 ; j++){
                     sb.append((char)('A' + i));
                     even_stack.push((char)('A' + i));
                 }
-                odd_stack.push((char)('A' + i));
+                odd = (char) ('A' + i);
                 numOfOdd++;
             }
         }
 
-        if(numOfOdd > 1){ // 홀 수의 개수가 2개 이상이면 펠린드롬 불가능
-            System.out.println("I'm Sorry Hansoo");
-            return;
-        }else{
-            if(!odd_stack.isEmpty()) sb.append(odd_stack.pop()); // 홀수를 가운데에다가 넣음
-            while(!even_stack.isEmpty()) sb.append(even_stack.pop());
-        }
-
+        if(numOfOdd == 1) sb.append(odd); // 홀수를 가운데에다가 넣음
+        while(!even_stack.isEmpty()) sb.append(even_stack.pop());
+        
         System.out.println(sb);
     }
 }
