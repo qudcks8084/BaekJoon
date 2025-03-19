@@ -1,4 +1,3 @@
-
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.ArrayDeque;
@@ -8,7 +7,6 @@ public class Main {
 	
 	static int H, W, R;
 	static int[][] map;
-	static boolean[][] visited;
 	public static void main(String[] args) throws Exception {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		
@@ -18,7 +16,6 @@ public class Main {
 		R = Integer.parseInt(st.nextToken());
 		
 		map = new int[H][W];
-		visited = new boolean[H][W];
 		
 		for(int c = 0 ; c < H ; c++) {
 			st = new StringTokenizer(br.readLine());
@@ -27,11 +24,10 @@ public class Main {
 			}
 		}
 		
-		int num = 0;
-		while(true) {
-			if(visited[num][num]) break;
+		int max = Math.min(H/2, W/2);
+		
+		for(int num = 0 ; num < max ; num++) {
 			rotate(num, num, num+1);
-			num++;
 		}
 		print();
 		
@@ -61,19 +57,15 @@ public class Main {
 		
 		// 다시 배열 저장하기 
 		while(c < H-k) {
-			visited[c][r] = true;
 			map[c++][r] = q.poll();
 		}
 		while(r < W-k) {
-			visited[c][r] = true;
 			map[c][r++] = q.poll();
 		}
 		while(c >= k) {
-			visited[c][r] = true;
 			map[c--][r] = q.poll();
 		}
 		while(r >= k) {
-			visited[c][r] = true;
 			map[c][r--] = q.poll();
 		}
 	}
