@@ -46,6 +46,9 @@ public class Main {
 
     static void dfs(int depth, int numOfPaper, boolean[][] map){
 
+        // 이미 최소값보다 크다면 종료 -> Pruning
+        if(numOfPaper >= minPaper) return;
+
         if(depth == M){
             minPaper = Math.min(minPaper, numOfPaper);
             return;
