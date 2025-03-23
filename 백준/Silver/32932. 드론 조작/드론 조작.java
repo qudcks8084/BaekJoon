@@ -8,7 +8,7 @@ public class Main {
     static int[] dr = {0, 1, 0, -1};
 
     static boolean[][] map;
-    static int M = 10000;
+    static int M = 1001;
 
     public static void main(String[] args) throws Exception {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -27,8 +27,8 @@ public class Main {
             map[x][y] = true;
         }
 
-        int sx = 5000;
-        int sy = 5000;
+        int sx = 500;
+        int sy = 500;
 
         char[] command = br.readLine().toCharArray();
 
@@ -56,7 +56,7 @@ public class Main {
         }
 
         StringBuilder sb = new StringBuilder();
-        sb.append(sx-5000).append(" ").append(sy-5000);
+        sb.append(sx-500).append(" ").append(sy-500);
         System.out.println(sb);
 
 
