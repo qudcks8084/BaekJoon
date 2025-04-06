@@ -4,11 +4,9 @@ import java.util.StringTokenizer;
 
 public class Main {
     static class TrieNode{
-        int numOfWord;
         TrieNode[] children;
 
         public TrieNode() {
-            this.numOfWord = 0;
             this.children = new TrieNode[26];
         }
     }
@@ -31,7 +29,6 @@ public class Main {
                 }
 
                 cur = cur.children[index];
-                cur.numOfWord++;
             }
         }
 
