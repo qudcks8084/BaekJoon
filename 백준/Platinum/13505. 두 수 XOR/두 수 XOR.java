@@ -1,80 +1,67 @@
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.StringTokenizer;
 
 public class Main {
 
-    public static final int MAX = 30;
+    /* XOR 연산
+     * 11 0
+     * 00 0
+     * 10 1
+     * 01 1
+     * */
 
-    public static class TrieNode{
-        boolean isLeaf;
+    static class TrieNode{
         TrieNode[] children;
 
         public TrieNode() {
-            this.isLeaf = false;
-            this.children = new TrieNode[2];
+            this.children = new TrieNode[2]; // 0과 1로 저장
         }
     }
 
-    public static class Trie{
-        int max;
+    static class Trie{
+        
         TrieNode root;
 
         public Trie() {
-            this.root = new TrieNode();
+            root = new TrieNode();
         }
 
-        public void insert(int num){
+        public void insert(int num) {
+            // 비트마스킹을 이용해서 32자리
             TrieNode cur = root;
 
-            for(int i = MAX ; i >= 0 ; i--){
-                int index = (num >> i) & 1;
+            for(int i = 30 ; i >= 0 ; i--){
+                int bit = (num >> i) & 1;
 
-                if(cur.children[index] == null){
-                    cur.children[index] = new TrieNode();
+                if(cur.children[bit] == null){
+                    cur.children[bit] = new TrieNode();
                 }
 
-                cur = cur.children[index];
+                cur = cur.children[bit];
             }
-
-            cur.isLeaf = true;
         }
+        
+        // XOR에서 가장 큰 결과가 나오려면 현재 숫자와 반대되는 숫자로 이동하면 된다.
+        public int xorQuery(int num) {
+            TrieNode cur = root;
+            int answer = 0;
 
-        /*
-        * 1. 앞에서부터 탐색
-        * 2. 2개로 갈라지는지 검사 -> 갈라지면 분기
-        * */
-        public int findMax(){
-            max = 0;
-            find(MAX, 0, root, root);
-            return max;
-        }
+            for(int i = 30 ; i >= 0 ; i--) {
+                int bit = (num >> i) & 1;
+                int reverse_bit = 1 - bit;
 
-        public void find(int depth, int num, TrieNode left, TrieNode right) {
-
-//            System.out.println(depth + " " + num);
-            if(depth == -1){
-                max = Math.max(max, num);
-                return;
+                // 반대로 갈 수 있는지 본다.
+                if (cur.children[reverse_bit] != null ) {
+                    cur = cur.children[reverse_bit];
+                    answer |= (1 << i);
+                } else if (cur.children[bit] != null) {
+                    cur = cur.children[bit];
+                } else break;
             }
 
-            boolean flag = false;
-            // 1 0 or 0 1 인지 검사하고 맞으면 탐색
-            if(left.children[0] != null && right.children[1] != null){
-                find(depth - 1, num | (1 << depth), left.children[0], right.children[1]);
-                flag = true;
-            }
-            if(left.children[1] != null && right.children[0] != null){
-                find(depth - 1, num | (1 << depth), left.children[1], right.children[0]);
-                flag = true;
-            }
-            if(flag) return; // 만약 위가 존재한다면 아래는 더 클 수 없음
-            if(left.children[0] != null && right.children[0] != null){
-                find(depth - 1, num , left.children[0], right.children[0]);
-            }
-            if(left.children[1] != null && right.children[1] != null){
-                find(depth - 1, num, left.children[1], right.children[1]);
-            }
+            return answer;
         }
     }
 
@@ -82,14 +69,24 @@ public class Main {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
         int N = Integer.parseInt(br.readLine());
-        StringTokenizer st = new StringTokenizer(br.readLine());
 
         Trie trie = new Trie();
-        for(int i = 0 ; i < N ; i++){
-            trie.insert(Integer.parseInt(st.nextToken()));
+
+        int[] arr = new int[N];
+
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        for(int i = 0 ; i < N ; i++) {
+            int tmp = Integer.parseInt(st.nextToken());
+            trie.insert(tmp);
+            arr[i] = tmp;
         }
 
-        System.out.println(trie.findMax());
+        int max = 0;
+        for (int num : arr) {
+            max = Math.max(max, trie.xorQuery(num));
+        }
+
+        System.out.println(max);
 
     }
 }
