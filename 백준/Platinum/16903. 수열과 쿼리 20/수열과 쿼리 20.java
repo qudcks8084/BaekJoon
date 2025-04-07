@@ -3,7 +3,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.StringTokenizer;
 
-public class Main {
+public class Main{
 
     /* XOR 연산
      * 11 0
@@ -34,13 +34,13 @@ public class Main {
             TrieNode cur = root;
 
             for(int i = 30 ; i >= 0 ; i--){
-                int index = (num & (1 << i)) > 0 ? 1 : 0;
+                int bit = (num >> i) & 1;
 
-                if(cur.children[index] == null){
-                    cur.children[index] = new TrieNode();
+                if(cur.children[bit] == null){
+                    cur.children[bit] = new TrieNode();
                 }
 
-                cur = cur.children[index];
+                cur = cur.children[bit];
                 cur.numOfWord++;
             }
         }
@@ -49,16 +49,16 @@ public class Main {
             TrieNode cur = root;
 
             for(int i = 30 ; i >= 0 ; i--){
-                int index = (num & (1 << i)) > 0 ? 1 : 0;
+                int bit = (num >> i) & 1;
 
                 // 1개만 있는 경우에는 아예 리턴
-                if(cur.children[index].numOfWord == 1){
-                    cur.children[index] = null;
+                if(cur.children[bit].numOfWord == 1){
+                    cur.children[bit] = null;
                     return;
                 }
 
                 // 1개보다 단어가 더 많은 경우
-                cur = cur.children[index];
+                cur = cur.children[bit];
                 cur.numOfWord--;
             }
         }
@@ -69,15 +69,15 @@ public class Main {
             int answer = 0;
 
             for(int i = 30 ; i >= 0 ; i--) {
-                int index = (num & (1 << i)) > 0 ? 1 : 0;
-                int target = index == 0 ? 1 : 0;
+                int bit = (num >> i) & 1;
+                int reverse_bit = 1 - bit;
 
                 // 반대로 갈 수 있는지 본다.
-                if (cur.children[target] != null && cur.children[target].numOfWord > 0) {
-                    cur = cur.children[target];
-                    answer += (int) Math.pow(2, i);
-                } else if (cur.children[index] != null && cur.children[index].numOfWord > 0) {
-                    cur = cur.children[index];
+                if (cur.children[reverse_bit] != null && cur.children[reverse_bit].numOfWord > 0) {
+                    cur = cur.children[reverse_bit];
+                    answer |= (1 << i);
+                } else if (cur.children[bit] != null && cur.children[bit].numOfWord > 0) {
+                    cur = cur.children[bit];
                 } else break;
             }
 
