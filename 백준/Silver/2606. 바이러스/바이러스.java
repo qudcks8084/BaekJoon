@@ -1,37 +1,53 @@
-
-import java.util.Scanner;
+import java.util.*;
+import java.io.*;
 
 public class Main {
-    static boolean connect[][];
-    static boolean visited[];
-    static int N, Com, answer;
-    public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
+    static int N;
+    public static void main(String[] args) throws Exception {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
-        Com = sc.nextInt();
-        N = sc.nextInt();
+        N = Integer.parseInt(br.readLine());
+        int p = Integer.parseInt(br.readLine());
 
-        connect = new boolean[Com][Com];
-        for(int i  = 0 ; i < N ; i++){
-            int a = sc.nextInt() - 1;
-            int b = sc.nextInt() - 1;
+        // 간선을 저장할 배열을 생성
+        boolean[][] connect = new boolean[N][N];
+
+        for(int i = 0 ; i < p ; i++){
+            StringTokenizer st = new StringTokenizer(br.readLine());
+            int a = Integer.parseInt(st.nextToken()) - 1;
+            int b = Integer.parseInt(st.nextToken()) - 1;
             connect[a][b] = true;
             connect[b][a] = true;
         }
 
-        visited = new boolean[Com];
-        DFS(0);
+        // 0번 컴퓨터가 감염되는 경우에 퍼지는 것을 감지
+        boolean[] visited = new boolean[N];
 
-        System.out.println(answer);
-    }
+        ArrayDeque<Integer> q = new ArrayDeque<>();
 
-    public static void DFS(int com){
-        visited[com] = true;
-        for(int i = 0 ; i < Com ; i++){
-            if(i != com && connect[com][i] && !visited[i]){
-                answer++;
-                DFS(i);
+        // 시작점 0번 진입 및 방문처리
+        q.offer(0);
+
+        while(!q.isEmpty()){
+            int cur = q.poll();
+
+            for(int i = 0 ; i < N ; i++){
+                if(i == cur || visited[i]) continue;
+                if(connect[cur][i]){
+                    visited[i] = true;
+                    q.offer(i);
+                }
             }
         }
+
+        // visited로 개수 세기
+        int cnt = 0;
+        for(int i = 0 ; i < N ; i++){
+            if(visited[i]) cnt++;
+        }
+
+        if(cnt > 0) cnt--;
+
+        System.out.println(cnt);
     }
 }
