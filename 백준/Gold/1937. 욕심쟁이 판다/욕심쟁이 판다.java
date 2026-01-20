@@ -1,67 +1,73 @@
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.util.Arrays;
-import java.util.StringTokenizer;
+import java.io.*;
+import java.util.*;
 
 public class Main {
 
     static int N;
     static int[][] map;
     static int[][] dp;
-    static int[] dx = {-1, 1, 0, 0}; // 4방향 이동을 위한 배열 (상,하,좌,우)
-    static int[] dy = {0, 0, -1, 1};
-
     public static void main(String[] args) throws Exception {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
         N = Integer.parseInt(br.readLine());
-
         map = new int[N][N];
         dp = new int[N][N];
+        for(int i = 0 ; i < N ; i++){
+            Arrays.fill(dp[i], -1);
+        }
 
-        for (int i = 0; i < N; i++) {
+        for(int c = 0 ; c < N ; c++){
             StringTokenizer st = new StringTokenizer(br.readLine());
-            for (int j = 0; j < N; j++) {
-                map[i][j] = Integer.parseInt(st.nextToken());
-            }
-            Arrays.fill(dp[i], -1); // dp 배열 초기화
-        }
-
-        int maxPath = 0;
-
-        // 모든 시작점에서 DFS 수행
-        for (int i = 0; i < N; i++) {
-            for (int j = 0; j < N; j++) {
-                maxPath = Math.max(maxPath, find(i, j));
+            for(int r = 0 ; r < N ; r++){
+                map[c][r] = Integer.parseInt(st.nextToken());
             }
         }
 
-        // 최종 결과 출력
-        System.out.println(maxPath);
+        int answer = 0;
+        for(int c = 0 ; c < N ; c++){
+            for(int r = 0 ; r < N ; r++){
+                if(dp[c][r] > 0){
+                    answer = Math.max(answer, dp[c][r]);
+                }else {
+                    answer = Math.max(answer, dfs(c, r));
+                }
+            }
+        }
+
+        System.out.println(answer);
     }
 
-    // 현재 위치 (x, y)에서의 최대 이동 거리를 반환하는 함수
-    public static int find(int x, int y) {
-        // 이미 계산된 경우 저장된 값 반환
-        if (dp[x][y] != -1) {
-            return dp[x][y];
-        }
+    static int[] dc = {-1, 0, 1, 0};
+    static int[] dr = {0, 1, 0, -1};
+    public static int dfs(int c, int r){
 
-        // 시작 위치만으로 경로 길이는 1
-        dp[x][y] = 1;
+        // 더 큰 것만 갈 수 있다.
+        int cur = map[c][r];
 
-        // 4방향 탐색
-        for (int i = 0; i < 4; i++) {
-            int nx = x + dx[i];
-            int ny = y + dy[i];
+        // 4 방향을 보고 dp가 있으면 그걸로 리턴하고
+        int max = 1;
 
-            // 범위 체크 및 더 큰 값을 가진 칸만 이동 가능
-            if (nx >= 0 && nx < N && ny >= 0 && ny < N && map[nx][ny] > map[x][y]) {
-                // 이동 가능한 경우 최대 경로 갱신
-                dp[x][y] = Math.max(dp[x][y], find(nx, ny) + 1);
+        for(int d = 0 ; d < 4 ; d++){
+            int nc = c + dc[d];
+            int nr = r + dr[d];
+
+            // 범위를 벗어난다면 넘어감
+            if(nc < 0 || nc >= N || nr < 0 || nr >= N) continue;
+
+            // 만약 대나무가 지금보다 적으면 안감
+            if(cur >= map[nc][nr]) continue;
+
+            // 만약 계산된 내용이 있다면 그것을 사용.
+            if(dp[nc][nr] != -1){
+                max = Math.max(max, dp[nc][nr] + 1);
+            }
+
+            // 없다면 계산한다.
+            else{
+                max = Math.max(max, dfs(nc, nr) + 1);
             }
         }
 
-        return dp[x][y];
+        return dp[c][r] = max;
     }
 }
