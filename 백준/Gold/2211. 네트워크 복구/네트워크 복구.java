@@ -59,6 +59,8 @@ public class Main {
         StringBuilder sb = new StringBuilder();
         while(!pq.isEmpty()){
 
+            if(cnt == N-1) break;
+
             Edge cur = pq.poll();
 
             if(dist[cur.e] < cur.w) continue;
@@ -80,5 +82,3 @@ public class Main {
         System.out.print(sb);
     }
 }
-
-
