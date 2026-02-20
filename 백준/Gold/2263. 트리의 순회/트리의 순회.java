@@ -19,6 +19,13 @@ public class Main {
         그 다음은 4-5-2를 포스트오더에서 가장 마지막을 찾아. 그게 중심이야. 그런식으로 가면 될거같은데...?
 
         그리고 StringBuilder에 중간 왼쪽 오른쪽 순으로 가면 정답 나올거같은데
+
+        일단 성공은 했음. 근데 너무 느림. for문을 없애야됨. 어캐 줄임...?
+
+        어차피 노드의 개수에서 가장 마지막꺼만 보면 된다. -> post의 위치로 한번에 찾는다
+
+        오른쪽은 어차피 사용한 마지막 위치 -1 위치임.
+        왼쪽은 왼쪽에서 + 왼쪽 노드의 위치임.
     */
 
     static int N;
@@ -42,11 +49,9 @@ public class Main {
 
         // postorder를 입력받는다.
         postorder = new int[N];
-        post_idx = new int[N+1];
         st = new StringTokenizer(br.readLine());
         for(int i = 0 ; i < N ; i++){
             int num = Integer.parseInt(st.nextToken());
-            post_idx[num] = i;
             postorder[i] = num;
         }
 
@@ -55,41 +60,30 @@ public class Main {
         int mid = postorder[N-1];
         int mid_idx = in_idx[mid];
 
-        // 시작점은 postorder[N-1]이다.
-        sb.append(mid).append(" ");
-
         // 왼쪽부터 방문을 시작한다.
-        preorder(0, mid_idx - 1);
-
-        // 다음 오른쪽을 방문한다.
-        preorder(mid_idx + 1, N-1);
+        preorder(0, N-1, 0, N-1);
 
         System.out.println(sb);
     }
 
     // lf -> 왼쪽 영역 rf -> 오른쪽 경계
     // 왼쪽에서부터 오른쪽에서
-    public static void preorder(int lf, int rf){
+    public static void preorder(int in_lf, int in_rf, int po_lf, int po_rf){
 
         // 만약 경계값을 넘어가면 끝.
-        if(rf < 0 || lf >= N || lf > rf) return;
+        if(in_lf > in_rf || po_lf > po_rf ) return;
 
-        // 자 이제 postOrder 숫자의 해당 구역을 순회하면서 중심점을 찾는다.
-        int mid = -1;
-        int max = -1;
-        for(int i = lf ; i <= rf ; i++){
-            int num = inorder[i];
-            if(max < post_idx[num]){
-                max = post_idx[num];
-                mid = num;
-            }
-        }
+        // 루트 노드 찾기
+        int mid = postorder[po_rf];
 
-        // 동일하게 왼쪽, 중간, 오른쪽 하면 된다.
-        int mid_idx = in_idx[mid];
         sb.append(mid).append(" ");
-        preorder(lf, mid_idx - 1);
-        preorder(mid_idx + 1, rf);
 
+        int mid_idx = in_idx[mid];
+
+        // cnt개만큼 이동한 것이 다음의 중심 노드임.
+        preorder(in_lf, mid_idx - 1, po_lf, po_lf + mid_idx - in_lf - 1);
+
+        // 1개 사용했으니까 오른쪽을 po_rf - 1
+        preorder(mid_idx + 1, in_rf, po_lf + mid_idx - in_lf, po_rf - 1);
     }
 }
